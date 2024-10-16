@@ -102,9 +102,10 @@ See [ABC Overview](@ref abc-overview) for more details.
 # Returns
 An [`ABCSMCOutput`](@ref) object.
 """
-function SimulatedABCSMC(reference_data::AbstractArray{AF,2},
+function SimulatedABCSMC(
+    reference_data::Any,
     simulator_function::Function,
-    priors::AbstractArray{D,1},
+    priors::Any,
     threshold_schedule::AbstractArray{AF,1},
     n_particles::Int;
     summary_statistic::Union{String,AbstractArray{String,1},Function} = "keep_all",
@@ -120,10 +121,22 @@ function SimulatedABCSMC(reference_data::AbstractArray{AF,2},
 
     summary_statistic = build_summary_statistic(summary_statistic)
     reference_summary_statistic = summary_statistic(reference_data)
-    distance_simulation_input = DistanceSimulationInput(reference_summary_statistic, simulator_function, summary_statistic, distance_function)
-    input = SimulatedABCSMCInput(n_params, n_particles, threshold_schedule,
-                                    priors, distance_simulation_input,
-                                    max_iter)
+
+    distance_simulation_input = DistanceSimulationInput(
+        reference_summary_statistic, 
+        simulator_function, 
+        summary_statistic, 
+        distance_function
+        )
+
+    input = SimulatedABCSMCInput(
+        n_params, 
+        n_particles, 
+        threshold_schedule,
+        priors, 
+        distance_simulation_input,
+        max_iter
+        )
 
     return ABCSMC(input; kwargs...)
 
